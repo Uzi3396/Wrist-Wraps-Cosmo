@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>COSMO Readiness Dashboard — Wrist Wrap Images</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#101723;
+      --panel2:#0e1520;
+      --text:#e7eef9;
+      --muted:#a9b7cc;
+      --line:rgba(255,255,255,.08);
+      --accent:#ff8a00;       /* RDX-ish orange */
+      --good:#32d583;
+      --warn:#fdb022;
+      --bad:#f97066;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 25% -10%, rgba(255,138,0,.22), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(50,213,131,.18), transparent 60%),
+        linear-gradient(180deg, #070a0f, var(--bg));
+      color:var(--text);
+    }
+
+    a{color:inherit;text-decoration:none}
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+      display:grid;
+      gap:18px;
+      grid-template-columns: 320px 1fr;
+      align-items:start;
+    }
+
+    /* Top bar */
+    .topbar{
+      grid-column:1 / -1;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      background:rgba(16,23,35,.75);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      position:sticky;
+      top:10px;
+      backdrop-filter: blur(10px);
+      z-index:10;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-width:0;
+    }
+    .dot{
+      width:14px;height:14px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #ffd09a, var(--accent));
+      box-shadow: 0 0 0 6px rgba(255,138,0,.12);
+      flex:0 0 auto;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .title h1{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:rgba(231,238,249,.92);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .title p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--muted);
+      flex:0 0 auto;
+    }
+    .pill strong{color:var(--text); font-weight:700}
+    .grade{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:34px;height:34px;
+      border-radius:10px;
+      background: rgba(50,213,131,.12);
+      border:1px solid rgba(50,213,131,.22);
+      color: var(--good);
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    /* Sidebar nav */
+    .sidebar{
+      position:sticky;
+      top:82px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .card{
+      background:rgba(16,23,35,.75);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(231,238,249,.85);
+    }
+    .card .bd{padding:14px}
+    .nav a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--muted);
+      border:1px solid transparent;
+      transition:.15s ease;
+    }
+    .nav a:hover{
+      background:rgba(255,255,255,.06);
+      border-color:var(--line);
+      color:var(--text);
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      color:rgba(231,238,249,.72);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    /* Main content */
+    .main{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .grid2{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .metric{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .metric .k{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .metric .k b{
+      font-size:22px;
+      letter-spacing:.02em;
+    }
+    .metric .k span{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .bar{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      overflow:hidden;
+    }
+    .bar > i{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(255,138,0,.95), rgba(50,213,131,.95));
+      border-radius:999px;
+    }
+    /* set widths inline via style="--w:94%" */
+    .bar > i{ width: var(--w, 0%); }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.55;
+      margin:0;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+    }
+    .bullet{
+      width:10px;height:10px;border-radius:50%;
+      margin-top:4px;
+      background:var(--good);
+      box-shadow: 0 0 0 6px rgba(50,213,131,.10);
+      flex:0 0 auto;
+    }
+    .bullet.warn{ background: var(--warn); box-shadow: 0 0 0 6px rgba(253,176,34,.10); }
+    .bullet.bad{ background: var(--bad); box-shadow: 0 0 0 6px rgba(249,112,102,.10); }
+
+    .li b{ font-size:13px; display:block; margin:0 0 2px; color:var(--text); }
+    .li span{ font-size:12px; color:var(--muted); line-height:1.5; display:block; }
+
+    .mono{
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(231,238,249,.86);
+      line-height:1.6;
+      background:rgba(0,0,0,.35);
+      border:1px solid var(--line);
+      padding:12px 12px;
+      border-radius:16px;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    /* Image walkthrough */
+    .walk{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      align-items:start;
+    }
+    .shot{
+      border-radius:16px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      background:rgba(0,0,0,.25);
+      min-height:240px;
+      position:relative;
+    }
+    .shot img{
+      display:block;
+      width:100%;
+      height:auto;
+    }
+    .shot .ph{
+      padding:18px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .shot .badge{
+      position:absolute;
+      top:12px;
+      left:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      background:rgba(255,138,0,.14);
+      border:1px solid rgba(255,138,0,.25);
+      color:rgba(255,208,154,.95);
+      backdrop-filter: blur(8px);
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:10px 14px;
+      padding:12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+    }
+    .kv .k{ color:rgba(231,238,249,.78); font-size:12px; letter-spacing:.08em; text-transform:uppercase;}
+    .kv .v{ color:var(--muted); font-size:12px; line-height:1.55;}
+    .kv .v b{ color:var(--text); font-weight:700; }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .chip{
+      font-size:11px;
+      color:rgba(231,238,249,.84);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      font-family:var(--mono);
+    }
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.18);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+      background:rgba(0,0,0,.22);
+    }
+    .note strong{ color:var(--text); }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+      .sidebar{ position:relative; top:auto; }
+      .walk{ grid-template-columns: 1fr; }
+      .grid2{ grid-template-columns: 1fr; }
+      .topbar{ position:relative; top:auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sticky topbar -->
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="dot"></div>
+        <div class="title">
+          <h1>COSMO Readiness Dashboard</h1>
+          <p>Wrist Wrap Listing Images — intent + commonsense knowledge graph interpretation</p>
+        </div>
+      </div>
+      <div class="pill">
+        <span class="grade">A</span>
+        <div>
+          <div><strong>94 / 100</strong> overall score</div>
+          <div style="font-size:11px;color:var(--muted)">Very strong recommendation candidate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="card">
+        <div class="hd">
+          <h2>Navigate</h2>
+          <span class="tag">v1.0</span>
+        </div>
+        <div class="bd nav">
+          <a href="#overview"><span>Overview</span><span class="tag">score</span></a>
+	  <a href="#walkthrough"><span>Image Walkthrough</span><span class="tag">per image</span></a>          
+          <a href="#breakdown"><span>Section Breakdown</span><span class="tag">6 parts</span></a>
+          <a href="#strengths"><span>Strengths</span><span class="tag">wins</span></a>
+          <a href="#gaps"><span>Remaining Gaps</span><span class="tag">ROI</span></a>
+          
+        </div>
+      </div>
+
+     
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Overview -->
+      <section id="overview" class="card">
+        <div class="hd">
+          <h2>Overview</h2>
+          <span class="tag">COSMO-ready</span>
+        </div>
+        <div class="bd grid2">
+          <div class="metric">
+            <div class="k">
+              <b>94 / 100</b>
+              <span>Overall COSMO Readiness</span>
+            </div>
+            <div class="bar" aria-label="Overall score bar">
+              <i style="--w:94%"></i>
+            </div>
+            <p class="small">
+              High-confidence, low-misinterpretation image set. Strong “intent nodes” are consistently reinforced:
+              <b>elasticated wrap</b>, <b>training support</b>, <b>neutral wrist alignment</b>, <b>thumb loop consistency</b>,
+              <b>loaded + dynamic workouts</b>.
+            </p>
+          </div>
+
+          <div>
+            <ul class="list">
+              <li class="li">
+                <span class="bullet"></span>
+                <div>
+                  <b>Recommendation Confidence: Excellent</b>
+                  <span>Images enable fast “what is it + why it matters + when to use it” resolution.</span>
+                </div>
+              </li>
+              <li class="li">
+                <span class="bullet"></span>
+                <div>
+                  <b>Intent Match Coverage: Broad (without overclaiming)</b>
+                  <span>Heavy training, dynamic movements, and loaded workouts are anchored to wrist stability.</span>
+                </div>
+              </li>
+              <li class="li">
+                <span class="bullet warn"></span>
+                <div>
+                  <b>Micro-optimizations remain</b>
+                  <span>Add one explicit “not a rigid medical brace” line or a tightness guide to push toward 97–98.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+<!-- Walkthrough -->
+      <section id="walkthrough" class="card">
+  <style>
+    /* ===== Carousel (CSS-only) ===== */
+    .carousel {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    /* Hide radio inputs */
+    .carousel input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Slides viewport */
+    .carousel__viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.22);
+    }
+
+    /* Track */
+    .carousel__track {
+      display: flex;
+      width: 100%;
+      transform: translateX(0%);
+      transition: transform .35s ease;
+    }
+
+    /* Each slide takes full width */
+    .carousel__slide {
+      min-width: 100%;
+      padding: 14px;
+    }
+
+    /* Two-column layout inside slide (same as your "walk") */
+    .carousel__slide .walk {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .carousel__slide .walk { grid-template-columns: 1fr; }
+    }
+
+    /* Nav controls */
+    .carousel__controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      padding: 6px 0;
+    }
+
+    .dotbtn {
+      cursor: pointer;
+      user-select: none;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: rgba(231,238,249,.85);
+      transition: .15s ease;
+    }
+
+    .dotbtn:hover {
+      background: rgba(255,255,255,.08);
+    }
+
+    .arrow {
+      cursor: pointer;
+      user-select: none;
+      min-width: 42px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: rgba(231,238,249,.9);
+      transition: .15s ease;
+    }
+    .arrow:hover { background: rgba(255,255,255,.08); }
+
+    /* ===== Active dot styling (per slide) ===== */
+    #s0:checked ~ .carousel__controls .dots label[for="s0"],
+    #s1:checked ~ .carousel__controls .dots label[for="s1"],
+    #s2:checked ~ .carousel__controls .dots label[for="s2"],
+    #s3:checked ~ .carousel__controls .dots label[for="s3"],
+    #s4:checked ~ .carousel__controls .dots label[for="s4"],
+    #s5:checked ~ .carousel__controls .dots label[for="s5"],
+    #s6:checked ~ .carousel__controls .dots label[for="s6"],
+    #s7:checked ~ .carousel__controls .dots label[for="s7"],
+    #s8:checked ~ .carousel__controls .dots label[for="s8"]{
+      background: rgba(255,138,0,.16);
+      border-color: rgba(255,138,0,.28);
+      color: rgba(255,208,154,.95);
+    }
+
+    /* ===== Slide switching (translate track) ===== */
+    #s0:checked ~ .carousel__viewport .carousel__track { transform: translateX(0%); }
+    #s1:checked ~ .carousel__viewport .carousel__track { transform: translateX(-100%); }
+    #s2:checked ~ .carousel__viewport .carousel__track { transform: translateX(-200%); }
+    #s3:checked ~ .carousel__viewport .carousel__track { transform: translateX(-300%); }
+    #s4:checked ~ .carousel__viewport .carousel__track { transform: translateX(-400%); }
+    #s5:checked ~ .carousel__viewport .carousel__track { transform: translateX(-500%); }
+    #s6:checked ~ .carousel__viewport .carousel__track { transform: translateX(-600%); }
+    #s7:checked ~ .carousel__viewport .carousel__track { transform: translateX(-700%); }
+    #s8:checked ~ .carousel__viewport .carousel__track { transform: translateX(-800%); }
+
+    /* ===== Show the correct arrows for the active slide (CSS-only) ===== */
+    .arrows { display: none; gap: 10px; }
+
+    #s0:checked ~ .carousel__controls .arrows.a0,
+    #s1:checked ~ .carousel__controls .arrows.a1,
+    #s2:checked ~ .carousel__controls .arrows.a2,
+    #s3:checked ~ .carousel__controls .arrows.a3,
+    #s4:checked ~ .carousel__controls .arrows.a4,
+    #s5:checked ~ .carousel__controls .arrows.a5,
+    #s6:checked ~ .carousel__controls .arrows.a6,
+    #s7:checked ~ .carousel__controls .arrows.a7,
+    #s8:checked ~ .carousel__controls .arrows.a8{
+      display: inline-flex;
+    }
+  </style>
+
+  <div class="hd">
+    <h2>Image Walkthrough (Carousel)</h2>
+    <span class="tag">per image</span>
+  </div>
+
+  <div class="bd">
+    <p class="small">
+      Use the arrows or the chips to move through each image. Replace the <span class="tag">src</span> paths with your exports.
+      This is <b>CSS-only</b> (no JS).
+    </p>
+
+    <div class="carousel">
+      <!-- Radios (state) -->
+      <input checked type="radio" name="slides" id="s0">
+      <input type="radio" name="slides" id="s1">
+      <input type="radio" name="slides" id="s2">
+      <input type="radio" name="slides" id="s3">
+      <input type="radio" name="slides" id="s4">
+      <input type="radio" name="slides" id="s5">
+      <input type="radio" name="slides" id="s6">
+      <input type="radio" name="slides" id="s7">
+      <input type="radio" name="slides" id="s8">
+
+      <!-- Viewport -->
+      <div class="carousel__viewport">
+        <div class="carousel__track">
+
+          <!-- Slide 0 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 0 — Hero Product Shot</h2>
+              <span class="tag">identity</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Product</div>
+                <img src="1.jpg" alt="Wrist wrap product shot"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;">
+                  <b>Drop your image here:</b> set <span class="tag">src</span> to your product shot file.
+                </div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v"><b>Elasticated wrist wrap</b> (hook-and-loop, thumb loop, fabric wrap)</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“What is this?” • “Is it a wrap or a brace?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→IsA→Elasticated Wrist Wrap<br>
+                    Product→Feature→Hook-and-loop / Thumb loop
+                  </div>
+                  <div class="k">Why it matters</div>
+                  <div class="v">Reduces misclassification and increases recommendation precision.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">IsA: wrist_wrap</span>
+                  <span class="chip">feature: thumb_loop</span>
+                  <span class="chip">feature: velcro_closure</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 1 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 1 — Designed for Training Support</h2>
+              <span class="tag">positioning</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Positioning</div>
+                <img src="2.jpg" alt="Designed for training support"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> training support + features.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v"><b>Firm yet flexible support</b> for training + performance</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Will these help in the gym?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→UsedFor→Training Support<br>
+                    Product→Feature→Adjustable Compression
+                  </div>
+                  <div class="k">Opportunity</div>
+                  <div class="v">Add one line: <b>“Not a rigid medical brace”</b> (optional).</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">used_for: training</span>
+                  <span class="chip">benefit: support</span>
+                  <span class="chip">property: elasticated</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 2 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 2 — Neutral Wrist / Precision Support</h2>
+              <span class="tag">mechanics</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Mechanics</div>
+                <img src="3.jpg" alt="Neutral wrist alignment"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> before/after wrist angle.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v">Maintains <b>neutral wrist angle</b> under load</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Will this stop my wrist bending on presses?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→Outcome→Neutral Wrist Alignment Under Load<br>
+                    Product→Limits→Excessive Flexion/Extension
+                  </div>
+                  <div class="k">Trust impact</div>
+                  <div class="v">Explainable mechanism → higher expert confidence.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">outcome: neutral_wrist</span>
+                  <span class="chip">limits: hyperextension</span>
+                  <span class="chip">context: heavy_lifts</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 3 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 3 — Integrated Thumb Loop</h2>
+              <span class="tag">ease</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Feature</div>
+                <img src="4.jpg" alt="Integrated thumb loop"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> thumb loop placement.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v">Thumb loop ensures <b>consistent placement</b> across sets</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“How do I wear these?” • “Will they slip?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→Feature→Thumb Loop<br>
+                    Product→Benefit→Consistent Placement
+                  </div>
+                  <div class="k">Conversion impact</div>
+                  <div class="v">Reduces beginner friction and returns.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">feature: thumb_loop</span>
+                  <span class="chip">benefit: consistency</span>
+                  <span class="chip">benefit: stability</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 4 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 4 — Elasticated Wrist Wraps (Usage)</h2>
+              <span class="tag">usage</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Usage</div>
+                <img src="5.jpg" alt="Usage and how-to"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> lifting + steps.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v">Used in <b>strength training</b> and loaded contexts</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“What workouts are these for?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→SuitableFor→Heavy Training<br>
+                    Product→SuitableFor→Dynamic Movements
+                  </div>
+                  <div class="k">Optimization</div>
+                  <div class="v">Keep activities tied to <b>wrist stability</b>.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">suitable_for: strength</span>
+                  <span class="chip">suitable_for: dynamic</span>
+                  <span class="chip">used_during: lifts</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 5 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 5 — Controlled Support (Heavy Training)</h2>
+              <span class="tag">context</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Context</div>
+                <img src="6.jpg" alt="Controlled support collage"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> heavy training collage.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v"><b>Controlled support</b> for heavy training</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Wrist support for heavy sets”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→SuitableFor→Heavy Training<br>
+                    Product→HelpsWith→Wrist Stability
+                  </div>
+                  <div class="k">Watch-out</div>
+                  <div class="v">If collage is broad, add an anchor line: <b>“Stable wrists under load.”</b></div>
+                </div>
+                <div class="chips">
+                  <span class="chip">context: heavy_training</span>
+                  <span class="chip">benefit: stability</span>
+                  <span class="chip">used_for: support</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 6 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 6 — Flexible Support (Dynamic Movements)</h2>
+              <span class="tag">mobility</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Mobility</div>
+                <img src="7.jpg" alt="Flexible support"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> dynamic movement collage.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v">Support is <b>flexible</b> (doesn’t lock the joint)</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Support without losing mobility.”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→SuitableFor→Dynamic Movements<br>
+                    Product→Property→Elastic / Flexible Support
+                  </div>
+                  <div class="k">Micro-upgrade</div>
+                  <div class="v">Optional: <b>“Not for immobilization.”</b></div>
+                </div>
+                <div class="chips">
+                  <span class="chip">property: flexible</span>
+                  <span class="chip">suitable_for: dynamic</span>
+                  <span class="chip">not_a: brace</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 7 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 7 — Stable Wrists (Loaded Workouts)</h2>
+              <span class="tag">outcome</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Outcome</div>
+                <img src="8.jpg" alt="Stable wrists"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> loaded workouts collage.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v"><b>Stable wrists across loaded workouts</b></div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Support across multiple exercises”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→HelpsWith→Wrist Stability<br>
+                    Product→UsedDuring→Loaded Workouts
+                  </div>
+                  <div class="k">Next best add</div>
+                  <div class="v">Ideal place for a <b>tightness guide</b> if adding one.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">outcome: stability</span>
+                  <span class="chip">used_during: workouts</span>
+                  <span class="chip">benefit: consistency</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Slide 8 -->
+          <article class="carousel__slide">
+            <div class="hd" style="border:0;background:none;padding:6px 0 10px;">
+              <h2 style="margin:0;">Image 8 — Internationally Renowned (Authority)</h2>
+              <span class="tag">trust</span>
+            </div>
+            <div class="walk">
+              <div class="shot">
+                <div class="badge">Authority</div>
+                <img src="9.jpg" alt="Authority / trust"
+                     onerror="this.remove(); this.parentNode.querySelector('.ph').style.display='block';">
+                <div class="ph" style="display:none;"><b>Drop your image here:</b> authority/compliance image.</div>
+              </div>
+              <div>
+                <div class="kv">
+                  <div class="k">AI reads</div>
+                  <div class="v">Strong <b>credibility signal</b> for performance-oriented buyers</div>
+                  <div class="k">Intent matched</div>
+                  <div class="v">“Is this brand legit?”</div>
+                  <div class="k">Graph edges</div>
+                  <div class="v">
+                    Product→Signal→Trust / Authority<br>
+                    Brand→Signal→Reputation
+                  </div>
+                  <div class="k">Policy resilience</div>
+                  <div class="v">Consider “<b>competition-inspired</b>” wording if you want lower risk.</div>
+                </div>
+                <div class="chips">
+                  <span class="chip">signal: trust</span>
+                  <span class="chip">signal: authority</span>
+                  <span class="chip">audience: advanced</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Controls (dots + arrows) -->
+      <div class="carousel__controls">
+        <!-- Arrows: one set per active slide (CSS-only) -->
+        <div class="arrows a0">
+          <label class="arrow" for="s8" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s1" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a1">
+          <label class="arrow" for="s0" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s2" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a2">
+          <label class="arrow" for="s1" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s3" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a3">
+          <label class="arrow" for="s2" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s4" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a4">
+          <label class="arrow" for="s3" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s5" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a5">
+          <label class="arrow" for="s4" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s6" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a6">
+          <label class="arrow" for="s5" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s7" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a7">
+          <label class="arrow" for="s6" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s8" aria-label="Next slide">›</label>
+        </div>
+        <div class="arrows a8">
+          <label class="arrow" for="s7" aria-label="Previous slide">‹</label>
+          <label class="arrow" for="s0" aria-label="Next slide">›</label>
+        </div>
+
+        <!-- Dots -->
+        <div class="dots" aria-label="Slide selector">
+          <label class="dotbtn" for="s0">0</label>
+          <label class="dotbtn" for="s1">1</label>
+          <label class="dotbtn" for="s2">2</label>
+          <label class="dotbtn" for="s3">3</label>
+          <label class="dotbtn" for="s4">4</label>
+          <label class="dotbtn" for="s5">5</label>
+          <label class="dotbtn" for="s6">6</label>
+          <label class="dotbtn" for="s7">7</label>
+          <label class="dotbtn" for="s8">8</label>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Optional:</strong> If you want auto-advance or swipe gestures, we’ll add a tiny JS enhancement. This version stays
+        strictly HTML + CSS.
+      </div>
+
+    </div>
+  </div>
+</section>
+      <!-- Breakdown -->
+      <section id="breakdown" class="card">
+        <div class="hd">
+          <h2>Section Breakdown</h2>
+          <span class="tag">scores</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">1) Product Identity</h2><span class="tag">20/20</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:100%"></i></div>
+                <p class="small">Clear hero product + naming prevents confusion with straps/gloves/braces.</p>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">2) Primary Function</h2><span class="tag">19/20</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:95%"></i></div>
+                <p class="small">Training support + neutral wrist alignment is reinforced repeatedly across images.</p>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">3) Intent Coverage</h2><span class="tag">18/20</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:90%"></i></div>
+                <p class="small">Beginner-to-expert queries mostly resolved; tightness guidance would improve.</p>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">4) Feature→Benefit→Outcome</h2><span class="tag">19/20</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:95%"></i></div>
+                <p class="small">Thumb loop and neutral-wrist visuals make causal mechanics explicit.</p>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">5) Multi-use (No Overreach)</h2><span class="tag">18/20</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:90%"></i></div>
+                <p class="small">Dynamic + loaded contexts are anchored to wrist stability, not “for everything.”</p>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="margin:0;">6) Trust & Compliance</h2><span class="tag">14/15</span></div>
+              <div class="bd">
+                <div class="bar"><i style="--w:93.3%"></i></div>
+                <p class="small">Strong authority signals; ensure third-party logo usage is authorized if used.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- Mental Model -->
+      <!-- <section id="mental-model" class="card">
+        <div class="hd">
+          <h2>Mental Model (Common-sense Knowledge Graph)</h2>
+          <span class="tag">COSMO view</span>
+        </div>
+        <div class="bd">
+          <p class="small">
+            This is the simplified “fact graph” the AI can construct from your images. The stronger and more consistent
+            these edges are, the more confidently your listing will be recommended for the right customer intent.
+          </p>
+          <div class="mono" role="note" aria-label="Knowledge graph">
+Product → IsA → Elasticated Wrist Wrap
+Product → UsedFor → Training Support
+Product → HelpsWith → Wrist Stability
+Product → Limits → Excessive Flexion/Extension
+Product → Outcome → Neutral Wrist Alignment Under Load
+Product → SuitableFor → Heavy Training
+Product → SuitableFor → Dynamic Movements
+Product → Feature → Thumb Loop (consistent placement)
+Product → Feature → Adjustable Compression
+Product → ImplicitNotA → Rigid Medical Brace / Immobilization Device
+          </div>
+
+          <div class="note">
+            <strong>High-impact improvement:</strong> make the “ImplicitNotA” edge explicit once:
+            “Training support wraps — not a rigid medical brace.”
+          </div>
+        </div>
+      </section> -->
+
+      <!-- Strengths -->
+      <section id="strengths" class="card">
+        <div class="hd">
+          <h2>Strengths (Why the set performs well)</h2>
+          <span class="tag">wins</span>
+        </div>
+        <div class="bd">
+          <ul class="list">
+            <li class="li">
+              <span class="bullet"></span>
+              <div>
+                <b>Clear positioning: elastic training support</b>
+                <span>Reduces confusion vs stiff powerlifting wraps and medical wrist braces.</span>
+              </div>
+            </li>
+            <li class="li">
+              <span class="bullet"></span>
+              <div>
+                <b>Mechanics explained (not just slogans)</b>
+                <span>Neutral wrist visual + hyperextension/flexion language improves expert trust and AI certainty.</span>
+              </div>
+            </li>
+            <li class="li">
+              <span class="bullet"></span>
+              <div>
+                <b>Feature-to-benefit clarity</b>
+                <span>Thumb loop image directly explains “consistent placement across sets” (high-value intent node).</span>
+              </div>
+            </li>
+            <li class="li">
+              <span class="bullet"></span>
+              <div>
+                <b>Broad use coverage without “all-purpose” overclaim</b>
+                <span>Dynamic + loaded workouts are tied back to wrist stability and compression support.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Gaps -->
+      <section id="gaps" class="card">
+        <div class="hd">
+          <h2>Remaining Gaps (Highest ROI)</h2>
+          <span class="tag">next</span>
+        </div>
+        <div class="bd grid2">
+          <div>
+            <ul class="list">
+              <li class="li">
+                <span class="bullet warn"></span>
+                <div>
+                  <b>Add one explicit “Not a medical brace” line</b>
+                  <span>Prevents mis-buys from rehab/immobilization shoppers and improves bot routing.</span>
+                </div>
+              </li>
+              <li class="li">
+                <span class="bullet warn"></span>
+                <div>
+                  <b>Add a “How tight to wrap?” micro-guide</b>
+                  <span>Light / Medium / Firm guidance reduces beginner uncertainty and potential misuse.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="note">
+            <strong>Copy suggestions (drop-in):</strong><br><br>
+            <span class="tag">Option A</span> Training support wraps — not a rigid medical brace<br>
+            <span class="tag">Option B</span> Light: warm-up • Medium: training • Firm: heavy presses<br>
+            <span class="tag">Option C</span> Avoid numbness — don’t over-tighten
+          </div>
+        </div>
+      </section>
+
+      
+
+
+    </main>
+  </div>
+</body>
+</html>
